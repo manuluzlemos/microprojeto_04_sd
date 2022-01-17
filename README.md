@@ -129,3 +129,9 @@ Implementação de um serviço de supermercado delivery com padrão ***REST*** p
 #### Observações:
 * Para utilizar a aplicação, pode-se colocar o ***http://localhost:3000*** no browser, pois o mesmo será redirecionado para o arquivo './src/index.html' que, por sua vez, apresenta os formulários para realizar testes das rotas supracitadas.
 
+### Heroku
+
+* A aplicação está disponível em: 
+
+    https://supermercado-delivery-sd-04.herokuapp.com/
+
