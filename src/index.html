@@ -127,6 +127,7 @@
             
             resultado += "</ul>";
             retorno.innerHTML = resultado;
+            ocultarForms();
         }
 
         async function mostrarFormAddCarrinho(){
@@ -152,6 +153,10 @@
             }
             resultado += "</ul>";
             retorno.innerHTML = resultado;
+            ocultarForms();
+        }
+
+        function ocultarForms(){
             document.getElementById('form-adicionar-carrinho').style.display = 'none';  
             document.getElementById('form-remover-carrinho').style.display = 'none';
             document.getElementById('form-solicitar-entrega').style.display = 'none';
@@ -181,6 +186,7 @@
             
             var retorno = document.getElementById('retorno');
             retorno.innerHTML = response.data.status;
+            ocultarForms();
             
         }
 
@@ -220,9 +226,7 @@
 
             var retorno = document.getElementById('retorno')
             retorno.innerHTML = resultado;
-            document.getElementById('form-adicionar-carrinho').style.display = 'none';  
-            document.getElementById('form-remover-carrinho').style.display = 'none';
-            document.getElementById('form-solicitar-entrega').style.display = 'none';
+            ocultarForms();
         }
         
         async function selecionarOperacao(){
