@@ -213,7 +213,7 @@
             var resultado = "<p><strong>Lista de pedidos</strong></p>";
             resultado += "<ul>";
             for(var i = 0; i < lista.length; i++){
-                resultado += `<li>Pedido ${lista[i].codigo} - ${lista[i].quantidade_produtos} produtos (R$ ${lista[i].total})</li>`;
+                resultado += `<li>Pedido ${lista[i].codigo} - ${lista[i].quantidade_produtos} produtos (R$ ${lista[i].total.toFixed(2)})</li>`;
                 if(lista[i].solicitacao_entrega !== null){
                     resultado += `<ul>
                                     <li>Rua: ${lista[i].solicitacao_entrega.rua}</li>
