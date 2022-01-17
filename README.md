@@ -117,7 +117,7 @@ Implementação de um serviço de supermercado delivery com padrão ***REST*** p
 3) Rodar o servidor
 
     ```
-    yarn server
+    yarn start
     ```
 
 4) Funcionamento da aplicação

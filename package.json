@@ -6,7 +6,7 @@
   "author": "Emanuelle Lemos <manuluz.lemos@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "server": "nodemon src/server.js"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "axios": "^0.24.0",
