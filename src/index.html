@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microprojeto 04 - Sistemas Distribuídos - 2021.2</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        body{
+            margin: 2em;
+        }
+        h2{
+            text-align: center;
+            margin-bottom: 1em;
+        }
+        .resultado {
+            background-color: #aeaeae;
+            padding: 60px;
+        }
+        
+        #formulario-principal{
+            margin-bottom: 5em;
+        }
+
+        #form-adicionar-carrinho,
+        #form-remover-carrinho,
+        #form-solicitar-entrega{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Microprojeto 04 - Sistemas Distribuídos - 2021.2</h2>
+
+    <div class="row">
+        
+        <div class="col-md-6">
+            
+            <!--FORMULÁRIO PRINCIPAL (FIXO)-->
+            <form id="formulario-principal">
+                <div class="form-group">
+                  <label for="select-operacao">Selecione a operação: </label>
+                  <select class="form-control" id="select-operacao" name="operacao">
+                    <option value="listar-catalogo">Listar produtos do catálogo</option>
+                    <option value="adicionar-carrinho">Adicionar produto ao carrinho</option>
+                    <option value="remover-carrinho">Remover produto do carrinho</option>
+                    <option value="pagar-pedido">Pagar o pedido</option>
+                    <option value="solicitar-entrega">Solicitar entrega</option>
+                    <option value="listar-pedidos">Listar pedidos</option>
+                    <option value="exibir-carrinho">Exibir carrinho</option>
+                  </select>
+                </div>
+                <button type="button" class="btn btn-outline-primary" onclick="selecionarOperacao()">Selecionar</button>
+            </form>
+
+
+            <!--FORMULÁRIO DE ADICIONAR PRODUTOS AO CARRINHO-->
+            <form id="form-adicionar-carrinho">
+                <div class="form-group" id="produtos">
+                    <label for="select-produtos-add">Selecione o produto: </label>
+                    <select class="form-control" id="select-produtos-add" name="produtos-add">
+                    </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="qtde-add">Quantidade: </label>
+                  <input type="number" class="form-control" id="qtde-add">
+                </div>
+                <button type="button" class="btn btn-outline-success" onclick="adicionarCarrinho()">Adicionar ao Carrinho</button>
+            </form>
+
+
+            <!--FORMULÁRIO DE REMOVER PRODUTOS DO CARRINHO-->
+            <form id="form-remover-carrinho">
+                <div class="form-group">
+                  <label for="codigo-remover">Código: </label>
+                  <input type="number" class="form-control" id="codigo-remover">
+                </div>
+                <button type="button" class="btn btn-outline-danger" onclick="removerCarrinho()">Remover do Carrinho</button>
+            </form>
+
+
+            <!--FORMULÁRIO DE SOLICITAR ENTREGA DE PEDIDO-->
+            <form id="form-solicitar-entrega">
+                <div class="form-group">
+                  <label for="codigo-entrega">Código: </label>
+                  <input type="number" class="form-control" id="codigo-entrega">
+                </div>
+                <div class="form-group">
+                    <label for="rua-entrega">Rua: </label>
+                    <input type="text" class="form-control" id="rua-entrega">
+                </div>
+                <div class="form-group">
+                    <label for="bairro-entrega">Bairro: </label>
+                    <input type="text" class="form-control" id="bairro-entrega">
+                </div>
+                <div class="form-group">
+                    <label for="cidade-entrega">Cidade: </label>
+                    <input type="text" class="form-control" id="cidade-entrega">
+                  </div>
+                <button type="button" class="btn btn-outline-primary" onclick="solictarEntrega()">Solicitar Entrega</button>
+            </form>
+        </div>
+
+
+        <div class="col-md-6 resultado">
+            <p class="h4">Resultados do processamento: </p>
+            <div id="retorno"></div>
+        </div>
+    </div>
+</body> 
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>    
+        async function listarCatalogo(){
+            const response = await axios.get('/catalogo/listar');
+            var retorno = document.getElementById('retorno')
+            var lista = response.data; //JSON.stringify(response.data);
+            var resultado = "<p><strong>Lista de produtos do catálogo</strong></p>";
+            resultado += "<ul>";
+            
+            for(var i = 0; i < lista.length; i++){
+                resultado += `<li>Produto ${lista[i].codigo}: ${lista[i].nome} - R$ ${lista[i].preco.toFixed(2)}</li>`;
+            }
+            
+            resultado += "</ul>";
+            retorno.innerHTML = resultado;
+        }
+
+        async function mostrarFormAddCarrinho(){
+            const response = await axios.get('/catalogo/listar');
+            var select = document.getElementById('select-produtos-add')
+            var lista = response.data; 
+            var resultado = "";
+            for(var i = 0; i < lista.length; i++){
+                resultado += `<option value="${lista[i].codigo}">${lista[i].nome} (R$ ${lista[i].preco.toFixed(2)})</option>`;
+            }
+            select.innerHTML = resultado;
+            document.getElementById('form-adicionar-carrinho').style.display = 'inline-block';
+        }
+
+        async function exibirCarrinho(){
+            const response = await axios.get('/carrinho/exibir');
+            var retorno = document.getElementById('retorno')
+            var lista = response.data; 
+            var resultado = "<p><strong>Lista de produtos do carrinho</strong></p>";
+            resultado += "<ul>";
+            for(var i = 0; i < lista.length; i++){
+                resultado += `<li>Produto ${lista[i].codigo} - ${lista[i].quantidade} unidades</li>`;
+            }
+            resultado += "</ul>";
+            retorno.innerHTML = resultado;
+            document.getElementById('form-adicionar-carrinho').style.display = 'none';  
+            document.getElementById('form-remover-carrinho').style.display = 'none';
+            document.getElementById('form-solicitar-entrega').style.display = 'none';
+        }
+
+        async function adicionarCarrinho(){
+            var select = document.getElementById('select-produtos-add');
+	        var codigo = select.options[select.selectedIndex].value;
+            var qtde = document.getElementById('qtde-add').value;
+
+            const response = await axios.post('/carrinho/adicionar', {
+                codigo: parseInt(codigo),
+                quantidade: parseInt(qtde)
+            });
+
+            await exibirCarrinho();
+        }
+    
+        async function removerCarrinho(){
+            var codigo = document.getElementById('codigo-remover').value;
+            const response = await axios.delete(`/carrinho/remover/${parseInt(codigo)}`);
+            await exibirCarrinho();
+        }
+
+        async function pagarPedido(){
+            const response = await axios.get('/carrinho/pagar');
+            
+            var retorno = document.getElementById('retorno');
+            retorno.innerHTML = response.data.status;
+            
+        }
+
+        async function solictarEntrega(){
+	        var codigo = document.getElementById('codigo-entrega').value;
+            var rua = document.getElementById('rua-entrega').value;
+            var bairro = document.getElementById('bairro-entrega').value;
+            var cidade = document.getElementById('cidade-entrega').value;
+
+            const response = await axios.post('/pedidos/entrega', {
+                codigo: parseInt(codigo),
+                rua: rua,
+                bairro: bairro,
+                cidade: cidade
+            });
+
+            await listarPedidos();
+        }
+
+        async function listarPedidos(){
+            const response = await axios.get('/pedidos/listar');
+            var lista = response.data; 
+            
+            var resultado = "<p><strong>Lista de pedidos</strong></p>";
+            resultado += "<ul>";
+            for(var i = 0; i < lista.length; i++){
+                resultado += `<li>Pedido ${lista[i].codigo} - ${lista[i].quantidade_produtos} produtos (R$ ${lista[i].total})</li>`;
+                if(lista[i].solicitacao_entrega !== null){
+                    resultado += `<ul>
+                                    <li>Rua: ${lista[i].solicitacao_entrega.rua}</li>
+                                    <li>Bairro: ${lista[i].solicitacao_entrega.bairro}</li>
+                                    <li>Cidade: ${lista[i].solicitacao_entrega.cidade}</li>
+                                </ul>`;
+                }
+            }
+            resultado += "</ul>";
+
+            var retorno = document.getElementById('retorno')
+            retorno.innerHTML = resultado;
+            document.getElementById('form-adicionar-carrinho').style.display = 'none';  
+            document.getElementById('form-remover-carrinho').style.display = 'none';
+            document.getElementById('form-solicitar-entrega').style.display = 'none';
+        }
+        
+        async function selecionarOperacao(){
+            var select = document.getElementById('select-operacao');
+	        var value = select.options[select.selectedIndex].value;
+
+            switch(value){
+                case "listar-catalogo":
+                    await listarCatalogo();
+                    break;
+                case "adicionar-carrinho":
+                    await mostrarFormAddCarrinho();
+                    break;
+                case "remover-carrinho":
+                    document.getElementById('form-remover-carrinho').style.display = 'inline-block';
+                    break;
+                case "pagar-pedido":
+                    await pagarPedido();
+                    break;
+                case "solicitar-entrega":
+                    document.getElementById('form-solicitar-entrega').style.display = 'inline-block';
+                    break;
+                case "listar-pedidos":
+                    await listarPedidos();
+                    break;
+                case "exibir-carrinho":
+                    await exibirCarrinho();
+                    break;
+            }
+        }
+        
+    </script>
+</html>
